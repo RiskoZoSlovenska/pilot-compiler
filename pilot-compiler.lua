@@ -34,7 +34,7 @@ local function serialize(thing, isKey)
 			return string.format(isKey and "[%q]" or "%q", thing)
 		end
 	elseif typ == "number" or typ == "boolean" then
-		return string.format(isKey and "[%s]" or "%s", thing)
+		return string.format(isKey and "[%s]" or "%s", tostring(thing))
 	elseif typ == "table" then
 		assert(not isKey)
 
