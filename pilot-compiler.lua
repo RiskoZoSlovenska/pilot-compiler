@@ -1,9 +1,8 @@
 #!/usr/bin/env lua
 
-local REQS_TBL_NAME = "__reqs__"
+local MODULES_TBL_NAME = "__modules__"
 local KEYWORDS = { "and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local",
 	"nil", "not", "or", "repeat", "return", "then", "true", "until", "while", "continue", "goto" }
-local REQ_LINE_PAT = "(\n[ \t]*local%s+[%a_][%w_]*%s*=%s*)require%(%s*[\'\"](.-)[\'\"]%s*%)"
 local SUFFIXES = {
 	".lua",
 	".luau",
@@ -12,6 +11,7 @@ local SUFFIXES = {
 	"/init.luau",
 }
 
+local lexer = require("pl.lexer")
 local decodeJson = require("dkjson").decode
 local fileExists = require("pl.path").exists
 local readFile = require("pl.utils").readfile
@@ -58,6 +58,11 @@ local function serialize(thing, isKey)
 	return error("unreachable reached")
 end
 
+local function evalString(str)
+	local loaded = (loadstring or load)("return " .. str)
+	return loaded and loaded() or ""
+end
+
 
 local function normalizeModuleName(moduleName)
 	for _, suffix in ipairs(SUFFIXES) do
@@ -71,25 +76,63 @@ local function normalizeModuleName(moduleName)
 end
 
 local function preprocessFile(contents)
-	contents = "\n" .. contents
-
+	local buf = {}
 	local requires = {}
-	local newContent = contents:gsub(REQ_LINE_PAT, function(prefix, moduleName)
-		local normalized = normalizeModuleName(moduleName)
-		if not normalized then
-			return nil
+
+	local iter = lexer.lua(contents, {}, {})
+
+	local function consumeInsignificant(minibuf)
+		local nTyp, nToken
+		repeat
+			nTyp, nToken = iter()
+			table.insert(minibuf, nToken)
+		until not (nTyp == "space" or nTyp == "comment")
+
+		return nTyp
+	end
+
+	local function parseRequire(minibuf)
+		local hasBracket = false
+
+		local stoppedToken = consumeInsignificant(minibuf)
+		if stoppedToken == "(" then
+			hasBracket = true
+			stoppedToken = consumeInsignificant(minibuf)
 		end
 
-		table.insert(requires, normalized)
-		return prefix .. string.format("%s[%q]", REQS_TBL_NAME, normalized)
-	end)
-	table.sort(requires)
+		if stoppedToken ~= "string" then
+			return minibuf
+		end
 
-	return newContent:sub(2), requires -- Remove the leading newline
+		local moduleName = evalString(minibuf[#minibuf])
+		local normalized = normalizeModuleName(moduleName)
+		table.insert(requires, normalized) -- Normalized may be nil, but that's ok
+
+		if not normalized or (hasBracket and consumeInsignificant(minibuf) ~= ")") then
+			return minibuf
+		else
+			return { string.format("%s[%q]", MODULES_TBL_NAME, normalized) }
+		end
+	end
+
+	while true do
+		local typ, token = iter()
+		if not typ then
+			break
+		end
+
+		if typ == "iden" and token == "require" then
+			join(buf, parseRequire({token}))
+		else
+			table.insert(buf, token)
+		end
+	end
+
+	return table.concat(buf), requires
 end
 
-local function getFileContentsAsExpression(contents, filename)
-	if filename:find("%.luau?$") then
+local function getFileContentsAsExpression(contents, fileName)
+	if fileName:find("%.luau?$") then
 		return string.format("(function()\n%s\nend)()", contents)
 	else
 		local decoded, _, err = decodeJson(contents)
@@ -116,7 +159,7 @@ local function getComponents(fileName, requiring, required)
 		end
 	end
 
-	table.insert(buf, string.format("%s[%q] = %s", REQS_TBL_NAME, fileName, expression))
+	table.insert(buf, string.format("%s[%q] = %s", MODULES_TBL_NAME, fileName, expression))
 
 	assert(table.remove(requiring) == fileName)
 	required[fileName] = true
@@ -126,7 +169,7 @@ end
 
 local function compile(filename)
 	local buf = getComponents(filename, {}, {})
-	table.insert(buf, 1, string.format("local %s = {}", REQS_TBL_NAME))
+	table.insert(buf, 1, string.format("local %s = {}", MODULES_TBL_NAME))
 	return table.concat(buf, "\n\n")
 end
 
