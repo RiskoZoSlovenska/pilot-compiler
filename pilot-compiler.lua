@@ -12,80 +12,10 @@ local SUFFIXES = {
 	"/init.luau",
 }
 
-
-local decodeJson, fileExists, readFile, find, getSelectedScript
-if not game then
-	decodeJson = require("dkjson").decode
-	fileExists = require("pl.path").exists
-	readFile = require("pl.utils").readfile
-	find = require("pl.tablex").find
-	getSelectedScript = nil -- Not used by the stock Lua version
-else
-	local HttpService = game:GetService("HttpService")
-	local Selection = game:GetService("Selection")
-
-	function decodeJson(str)
-		local out, err = HttpService:JSONDecode(str)
-		return out, nil, err
-	end
-
-	local function isScript(thing)
-		return thing:IsA("ModuleScript")
-	end
-
-	function getSelectedScript()
-		local sel = Selection:Get()[1]
-		if #sel ~= 1 then
-			return nil, "unable to determine root; select a single ModuleScript"
-		elseif not isScript(sel[1]) then
-			return nil, "selection must be a ModuleScript"
-		end
-
-		return sel
-	end
-
-	function fileExists(path)
-		local selected, err = getSelectedScript()
-		if not selected then
-			return nil, err
-		end
-
-		local cur = selected.Parent
-
-		for component in string.gmatch(path, "[^/\\]+") do
-			cur = cur:FindFirstChild(component)
-			if not cur then
-				return false, nil
-			end
-		end
-
-		return true, nil
-	end
-
-	function readFile(path)
-		local selected, err = getSelectedScript()
-		if not selected then
-			return nil, err
-		end
-
-		local cur = selected.Parent
-
-		for component in string.gmatch(path, "[^/\\]+") do
-			cur = cur:FindFirstChild(component)
-			if not cur then
-				return nil, "cannot find file: " .. component
-			end
-		end
-
-		if not isScript(cur) then
-			return nil, "file is not a ModuleScript: " .. path
-		end
-
-		return cur.Source, nil
-	end
-
-	find = table.find
-end
+local decodeJson = require("dkjson").decode
+local fileExists = require("pl.path").exists
+local readFile = require("pl.utils").readfile
+local find = require("pl.tablex").find
 
 
 local function join(tbl1, tbl2)
@@ -201,26 +131,16 @@ local function compile(filename)
 end
 
 
-if not game then
-	if pcall(debug.getlocal, 4, 1) then
-		return compile -- Was require()d, not ran directly
-	end
-
-	local inName = arg[1]
-	if not inName then
-		io.stdout:write("usage: pilot-compiler.lua <source-file>\n")
-		os.exit()
-	end
-	assert(type(inName) == "string", "missing <source-file>")
-
-	io.stdout:write(compile(inName))
-	return compile
-else
-	local selected, err = getSelectedScript()
-	if not selected then
-		print("usage: select a ModuleScript to compile, then try again (" .. err .. ")")
-		return nil
-	end
-
-	return compile(selected.Name)
+if pcall(debug.getlocal, 4, 1) then
+	return compile -- Was require()d, not ran directly
 end
+
+local inName = arg[1]
+if not inName then
+	io.stdout:write("usage: pilot-compiler.lua <source-file>\n")
+	os.exit()
+end
+assert(type(inName) == "string", "missing <source-file>")
+
+io.stdout:write(compile(inName))
+return compile
