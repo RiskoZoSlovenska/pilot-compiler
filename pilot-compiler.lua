@@ -3,11 +3,20 @@
 local REQS_TBL_NAME = "__reqs__"
 local KEYWORDS = { "and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local",
 	"nil", "not", "or", "repeat", "return", "then", "true", "until", "while", "continue", "goto" }
+local REQ_LINE_PAT = "(\n[ \t]*local%s+[%a_][%w_]*%s*=%s*)require%(%s*[\'\"](.-)[\'\"]%s*%)"
+local SUFFIXES = {
+	".lua",
+	".luau",
+	".json",
+	"/init.lua",
+	"/init.luau",
+}
 
 
-local decodeJson, readFile, find, getSelectedScript
+local decodeJson, fileExists, readFile, find, getSelectedScript
 if not game then
 	decodeJson = require("dkjson").decode
+	fileExists = require("pl.path").exists
 	readFile = require("pl.utils").readfile
 	find = require("pl.tablex").find
 	getSelectedScript = nil -- Not used by the stock Lua version
@@ -16,7 +25,8 @@ else
 	local Selection = game:GetService("Selection")
 
 	function decodeJson(str)
-		return HttpService:JSONDecode(str)
+		local out, err = HttpService:JSONDecode(str)
+		return out, nil, err
 	end
 
 	local function isScript(thing)
@@ -26,12 +36,30 @@ else
 	function getSelectedScript()
 		local sel = Selection:Get()[1]
 		if #sel ~= 1 then
-			return nil, "unable to determine root; make sure you have only one thing selected"
+			return nil, "unable to determine root; select a single ModuleScript"
 		elseif not isScript(sel[1]) then
 			return nil, "selection must be a ModuleScript"
 		end
 
 		return sel
+	end
+
+	function fileExists(path)
+		local selected, err = getSelectedScript()
+		if not selected then
+			return nil, err
+		end
+
+		local cur = selected.Parent
+
+		for component in string.gmatch(path, "[^/\\]+") do
+			cur = cur:FindFirstChild(component)
+			if not cur then
+				return false, nil
+			end
+		end
+
+		return true, nil
 	end
 
 	function readFile(path)
@@ -64,14 +92,6 @@ local function join(tbl1, tbl2)
 	for _, val in ipairs(tbl2) do
 		table.insert(tbl1, val)
 	end
-end
-
-local function isLua(filename)
-	return filename:find("%.luau?$") ~= nil
-end
-
-local function isJson(filename)
-	return filename:find("%.json$") ~= nil
 end
 
 
@@ -109,75 +129,73 @@ local function serialize(thing, isKey)
 end
 
 
-local function parseInfoString(contents)
-	local infoString, newContents = contents:match("^%-%-%[%[!(.+)%]%]\n?(.*)")
-	if not infoString then
-		return {}, contents
-	end
-
-	local requires = {}
-	for args in string.gmatch(infoString, "\n%s*req:%s+([^\r\n]+)") do
-		local alias, moduleName = args:match("^([%a_][%w_]*)%s+=%s+(%S+)")
-		assert(alias and moduleName, "malformed req line: " .. args)
-
-		if not isLua(moduleName) and not isJson(moduleName) then
-			moduleName = moduleName:gsub("/?$", "/init.lua")
+local function normalizeModuleName(moduleName)
+	for _, suffix in ipairs(SUFFIXES) do
+		local filename = moduleName .. suffix
+		if fileExists(filename) then
+			return filename
 		end
-
-		table.insert(requires, {moduleName, alias})
 	end
-	table.sort(requires, function(a, b) return a[1] < b[1] end)
 
-	return requires, newContents
+	return nil
 end
 
-local function getFileContentsAsExpression(contents, filename, requires)
-	if isLua(filename) then
-		local buf = { "(function()\n" }
-		for _, reqInfo in ipairs(requires) do
-			table.insert(buf, string.format("local %s = %s[%q]\n", reqInfo[2], REQS_TBL_NAME, reqInfo[1]))
+local function preprocessFile(contents)
+	contents = "\n" .. contents
+
+	local requires = {}
+	local newContent = contents:gsub(REQ_LINE_PAT, function(prefix, moduleName)
+		local normalized = normalizeModuleName(moduleName)
+		if not normalized then
+			return nil
 		end
-		table.insert(buf, contents)
-		table.insert(buf, "\nend)()")
-		return table.concat(buf)
+
+		table.insert(requires, normalized)
+		return prefix .. string.format("%s[%q]", REQS_TBL_NAME, normalized)
+	end)
+	table.sort(requires)
+
+	return newContent:sub(2), requires -- Remove the leading newline
+end
+
+local function getFileContentsAsExpression(contents, filename)
+	if filename:find("%.luau?$") then
+		return string.format("(function()\n%s\nend)()", contents)
 	else
 		local decoded, _, err = decodeJson(contents)
 		assert(decoded, "error while reading JSON: " .. tostring(err))
-
 		return serialize(decoded)
 	end
 end
 
-local function getComponents(moduleName, parentName, requiring, required)
-	table.insert(requiring, moduleName)
+local function getComponents(fileName, requiring, required)
+	table.insert(requiring, fileName)
 
-	local rawContent = assert(readFile(moduleName), parentName .. ": no such file: " .. moduleName)
-	local requires, newContent = parseInfoString(rawContent)
-	local expression = getFileContentsAsExpression(newContent, moduleName, requires)
+	local rawContent = assert(readFile(fileName), "no such module: " .. fileName)
+	local newContent, deps = preprocessFile(rawContent)
+	local expression = getFileContentsAsExpression(newContent, fileName, deps)
 
 	local buf = {}
-	for _, reqInfo in ipairs(requires) do
-		local reqModuleName = reqInfo[1]
-
-		if find(requiring, reqModuleName) then
+	for _, dep in ipairs(deps) do
+		if find(requiring, dep) then
 			error("cyclic require between: " .. table.concat(requiring, " <-> "))
 		end
 
-		if not required[reqModuleName] then
-			join(buf, getComponents(reqModuleName, moduleName, requiring, required))
+		if not required[dep] then
+			join(buf, getComponents(dep, requiring, required))
 		end
 	end
 
-	table.insert(buf, string.format("%s[%q] = %s", REQS_TBL_NAME, moduleName, expression))
+	table.insert(buf, string.format("%s[%q] = %s", REQS_TBL_NAME, fileName, expression))
 
-	assert(table.remove(requiring) == moduleName)
-	required[moduleName] = true
+	assert(table.remove(requiring) == fileName)
+	required[fileName] = true
 
 	return buf
 end
 
 local function compile(filename)
-	local buf = getComponents(filename, "<ROOT>", {}, {})
+	local buf = getComponents(filename, {}, {})
 	table.insert(buf, 1, string.format("local %s = {}", REQS_TBL_NAME))
 	return table.concat(buf, "\n\n")
 end

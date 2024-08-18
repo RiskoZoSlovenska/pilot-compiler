@@ -1,6 +1,4 @@
---[[!
-	req: a = pkg1/a.lua
-	req: b = pkg1/b.json
-]]
+local a = require("pkg1/a")
+local b = require("pkg1/b")
 
 return { a = a, b = b.foo }
