@@ -1,0 +1,7 @@
+{
+	"foo": 3,
+	"nil": true,
+	"aaaa": [1, 2, 3, null, 5, 6],
+	"_bar": null,
+	"epi\nc": "co\nol"
+}
