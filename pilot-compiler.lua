@@ -12,8 +12,8 @@ local SUFFIXES = {
 }
 
 local lexer = require("pl.lexer")
-local decodeJson = require("dkjson").decode
-local fileExists = require("pl.path").exists
+local pl_path = require("pl.path")
+local json = require("dkjson")
 local readFile = require("pl.utils").readfile
 local find = require("pl.tablex").find
 
@@ -67,8 +67,8 @@ end
 local function normalizeModuleName(moduleName)
 	for _, suffix in ipairs(SUFFIXES) do
 		local filename = moduleName .. suffix
-		if fileExists(filename) then
-			return filename
+		if pl_path.exists(filename) then
+			return pl_path.normpath(filename)
 		end
 	end
 
@@ -135,7 +135,7 @@ local function getFileContentsAsExpression(contents, fileName)
 	if fileName:find("%.luau?$") then
 		return string.format("(function()\n%s\nend)()", contents)
 	else
-		local decoded, _, err = decodeJson(contents)
+		local decoded, _, err = json.decode(contents)
 		assert(decoded, "error while reading JSON: " .. tostring(err))
 		return serialize(decoded)
 	end
