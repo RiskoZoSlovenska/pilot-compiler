@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-local MODULES_TBL_NAME = "__modules__"
+local MODULES_TBL_NAME = "__pcmodules__"
 local KEYWORDS = { "and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local",
 	"nil", "not", "or", "repeat", "return", "then", "true", "until", "while", "continue", "goto" }
 local SUFFIXES = {
