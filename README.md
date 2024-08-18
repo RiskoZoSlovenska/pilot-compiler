@@ -35,3 +35,5 @@ lua pilot-compiler.lua file.lua
 ### Caveats
 
 1. Hasn't been extensively tested; please report any bugs.
+2. Doesn't support periods as separators; use slashes instead.
+3. Doesn't try to resolve all the different Lua paths, only a handful of hard-coded ones.
