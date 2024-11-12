@@ -15,7 +15,7 @@ jobs:
         with:
           luaRocksVersion: "3.11.1"
 
-      - run: tree ".lua" \f \a
+      - run: tree ".lua" /f /a
 
       - name: Checkout custom luapak
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
 
       - name: Bundle
         run: |
-          luapak make -o pilot-compiler.exe --verbose --lua-incdir="${{ github.workspace }}/.lua/include" --lua-lib="${{ github.workspace }}/.lua/include/lua51.dll"
+          luapak make -o pilot-compiler.exe --verbose --lua-incdir="${{ github.workspace }}/.lua/include" --lua-lib="${{ github.workspace }}/.lua/lib/lua51.dll"
           tree /f /a
           move dist/pilot-compiler pilot-compiler.exe
         working-directory: pilot-compiler
