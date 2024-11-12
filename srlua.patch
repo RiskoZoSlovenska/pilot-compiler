@@ -10,7 +10,7 @@ index 4692cd5..3b64296 100644
 -LUAINC= $(LUA)/src
 -LUALIB= $(LUA)/src
 -LUABIN= $(LUA)/src
-+LUA= .lua
++LUA= ../.lua
 +LUAINC= $(LUA)/include
 +LUALIB= $(LUA)/lib
 +LUABIN= $(LUA)/bin
