@@ -15,7 +15,9 @@ jobs:
         with:
           luaRocksVersion: "3.11.1"
 
-      - name: Checkout custom luapak branch
+      - run: tree .lua \f \a
+
+      - name: Checkout custom luapak
         uses: actions/checkout@v4
         with:
           repository: RiskoZoSlovenska/luapak
@@ -33,15 +35,15 @@ jobs:
 
       - name: Bundle
         run: |
-          luapak make --verbose
+          luapak make -o pilot-compiler.exe --verbose --lua-incdir="${{ github.workspace }}/.lua/include" --lua-lib="${{ github.workspace }}/.lua/include/lua51.dll"
           tree /f /a
-          dir dist
+          move dist/pilot-compiler pilot-compiler.exe
         working-directory: pilot-compiler
 
       - name: Test
-        run: ../dist/pilot-compiler.exe main.lua
+        run: ../pilot-compiler.exe main.lua
         working-directory: pilot-compiler/example
 
       - uses: actions/upload-artifact@v4
         with:
-          path: pilot-compiler/dist/pilot-compiler.exe
+          path: pilot-compiler/pilot-compiler.exe
