@@ -14,23 +14,26 @@ jobs:
       - name: Checkout srlua
         uses: actions/checkout@v4
         with:
-            repository: LuaDist/srlua
-            ref: dd0fc9461b4722d673631245d616e92c7c93c590
-            path: srlua
+          repository: LuaDist/srlua
+          ref: dd0fc9461b4722d673631245d616e92c7c93c590
+          path: srlua
 
       - name: Checkout pilot-compiler
         uses: actions/checkout@v4
+        with:
+          path: pilot-compiler
 
       - name: Build srlua
         run: |
-          git apply ../srlua.patch
+          git apply ../pilot-compiler/srlua.patch
           make srlua.exe
-        working-directory: ${{ github.workspace }}\srlua
+        working-directory: srlua
 
       - run: |
           luarocks make
-          srlua/glue srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
+          ../srlua/glue ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
+        working-directory: pilot-compiler
 
       - run: |
           ../pilot-compiler.exe main.lua
-        working-directory: example
+        working-directory: pilot-compiler/example
