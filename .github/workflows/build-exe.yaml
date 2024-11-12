@@ -32,13 +32,19 @@ jobs:
           make glue.exe
         working-directory: srlua
 
+      - name: Test srlua
+        run: |
+          glue.exe srlua.exe test.lua test.exe
+          echo "Built ok"
+          test.exe 123 "hello"
+        working-directory: srlua
+
       - name: Make pilot-compiler
         run: luarocks make
         working-directory: pilot-compiler
 
       - name: Bundle pilot-compiler
-        run: ../srlua/glue.exe
-        # run: ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
+        run: ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
         working-directory: pilot-compiler
 
       - name: Test pilot-compiler
