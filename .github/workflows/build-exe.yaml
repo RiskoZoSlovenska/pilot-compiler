@@ -10,7 +10,7 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: "5.4"
+          luaVersion: "5.1"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
 
       - name: Checkout srlua

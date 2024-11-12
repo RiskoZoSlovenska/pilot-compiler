@@ -1,8 +1,8 @@
 diff --git a/Makefile b/Makefile
-index 4692cd5..f2eda60 100644
+index 4692cd5..5e50292 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,16 +1,10 @@
+@@ -1,28 +1,22 @@
  # makefile for srlua
  
  # change these to reflect your Lua installation
@@ -23,7 +23,12 @@ index 4692cd5..f2eda60 100644
  
  # probably no need to change anything below here
  CC= gcc
-@@ -22,7 +16,7 @@ EXPORT= -Wl,-E
+ CFLAGS= $(INCS) $(WARN) -O2 $G
+ WARN= -ansi -pedantic -Wall -Wextra
+ INCS= -I$(LUAINC)
+-LIBS= -L$(LUALIB) -llua -lm -ldl
++LIBS= -L$(LUALIB) -llua51 -lm
+ EXPORT= -Wl,-E
  # for Mac OS X comment the previous line above or do 'make EXPORT='
  
  T= a.out
