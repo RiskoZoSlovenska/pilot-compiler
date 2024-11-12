@@ -34,3 +34,7 @@ jobs:
       - name: Test
         run: ../pilot-compiler.exe main.lua
         working-directory: pilot-compiler/example
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: pilot-compiler.exe
