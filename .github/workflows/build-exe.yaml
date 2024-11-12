@@ -11,19 +11,26 @@ jobs:
       - uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: "5.1"
-      - uses: RiskoZoSlovenska/gh-actions-luarocks@master
-        with:
-          luaRocksVersion: "2.4.4"
+      - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
 
-      - name: Checkout pilot-compiler
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          path: pilot-compiler
+
+      - name: Build
+        run: luarocks make
+        working-directory: pilot-compiler
 
       - name: Bundle
         run: |
-          luarocks install luapak
-          luapak make
+          curl -OL https://github.com/samyeyo/rtc/releases/download/v1.6.0/rtc-1.6.0-x64.zip
+          unzip -n rtc-1.6.0-x64.zip
+          sed -i 's/#!/--/' pilot-compiler.lua  # rtc doesn't like the shebang, so comment it out
+          ./rtc pilot-compiler.lua
           dir
+        working-directory: pilot-compiler
 
-      - name: Test pilot-compiler
+      - name: Test
         run: ../pilot-compiler.exe main.lua
-        working-directory: example
+        working-directory: pilot-compiler/example
