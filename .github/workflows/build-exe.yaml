@@ -6,6 +6,8 @@ jobs:
   build-exe:
     runs-on: windows-latest
     steps:
+      - run: echo %APPDATA%
+
       # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: leafo/gh-actions-lua@v10
