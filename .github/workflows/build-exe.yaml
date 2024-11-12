@@ -23,14 +23,14 @@ jobs:
 
       - name: Build srlua
         run: |
-          cd srlua
           git apply ../srlua.patch
           make srlua.exe
+        working-directory: srlua
 
       - run: |
           luarocks make
           srlua/glue srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
 
       - run: |
-          cd example
           ../pilot-compiler.exe main.lua
+        working-directory: example
