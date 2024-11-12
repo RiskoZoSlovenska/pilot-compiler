@@ -14,7 +14,7 @@ jobs:
       - name: Checkout srlua
         uses: actions/checkout@v4
         with:
-            repository: https://github.com/LuaDist/srlua
+            repository: LuaDist/srlua
             ref: dd0fc9461b4722d673631245d616e92c7c93c590
             path: srlua
 
