@@ -12,9 +12,7 @@ local SUFFIXES = {
 }
 
 local lexer = require("pl.lexer")
-local pl_path = require("pl.path")
 local json = require("dkjson")
-local readFile = require("pl.utils").readfile
 local find = require("pl.tablex").find
 
 
@@ -22,6 +20,33 @@ local function join(tbl1, tbl2)
 	for _, val in ipairs(tbl2) do
 		table.insert(tbl1, val)
 	end
+end
+
+local function readFile(filename)
+	local file = io.open(filename)
+	if not file then
+		return nil
+	end
+
+	local data = file:read("*a")
+	file:close()
+	return data
+end
+
+local function normalizePath(path)
+	local normalized = {}
+	for component in string.gmatch(path, "[^/\\]+") do
+		if component == ".." then
+			table.remove(normalized)
+		elseif component ~= "" and component ~= "." then
+			table.insert(normalized, component)
+		end
+	end
+	if #normalized == 0 then
+		table.insert(normalized, ".")
+	end
+
+	return table.concat(normalized, "/")
 end
 
 
@@ -67,8 +92,9 @@ end
 local function normalizeModuleName(moduleName)
 	for _, suffix in ipairs(SUFFIXES) do
 		local filename = moduleName .. suffix
-		if pl_path.exists(filename) then
-			return pl_path.normpath(filename)
+
+		if readFile(filename) then
+			return normalizePath(filename)
 		end
 	end
 
