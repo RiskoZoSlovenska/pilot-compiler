@@ -28,8 +28,7 @@ jobs:
       - name: Build srlua
         run: |
           git apply ../pilot-compiler/srlua.patch
-          make srlua.exe
-          make glue.exe
+          make
         working-directory: srlua
 
       - run: |
