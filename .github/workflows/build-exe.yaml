@@ -31,7 +31,7 @@ jobs:
 
       - name: Bundle
         run: |
-          luapak make --verbose --no-compress --no-minify
+          luapak make --verbose
           tree
           dir dist
         working-directory: pilot-compiler
