@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 4692cd5..5e50292 100644
+index 4692cd5..15bb353 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,28 +1,22 @@
@@ -47,7 +47,8 @@ index 4692cd5..5e50292 100644
 +$T:	$S $(TEST) glue.exe
 +	./glue.exe $S $(TEST) $T
  
- $S:	$(OBJS)
+-$S:	$(OBJS)
++$S glue.exe:	$(OBJS)
  	$(CC) -o $@ $(EXPORT) $(OBJS) $(LIBS)
  
  clean:
