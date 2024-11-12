@@ -24,6 +24,7 @@ jobs:
           cd build
           cmake .. 
           cmake --build . --config Release
+          cmake --install .
         working-directory: dlfcn-win32
 
       - name: Checkout srlua
