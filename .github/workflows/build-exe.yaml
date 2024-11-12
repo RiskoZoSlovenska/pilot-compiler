@@ -30,12 +30,9 @@ jobs:
           git apply ../pilot-compiler/srlua.patch
           make srlua.exe
           make glue.exe
-        working-directory: srlua
-
-      - name: Test srlua
-        run: |
-          glue.exe srlua.exe test.lua test.exe
           echo "Built ok"
+          glue.exe srlua.exe test.lua test.exe
+          echo "Bundled ok"
           test.exe 123 "hello"
         working-directory: srlua
 

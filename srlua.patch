@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 4692cd5..15bb353 100644
+index 4692cd5..db74c38 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,28 +1,22 @@
@@ -37,7 +37,7 @@ index 4692cd5..15bb353 100644
  OBJS= srlua.o
  TEST= test.lua
  
-@@ -31,14 +25,13 @@ all:	test
+@@ -31,14 +25,16 @@ all:	test
  test:	$T
  	./$T *
  
@@ -47,10 +47,12 @@ index 4692cd5..15bb353 100644
 +$T:	$S $(TEST) glue.exe
 +	./glue.exe $S $(TEST) $T
  
--$S:	$(OBJS)
-+$S glue.exe:	$(OBJS)
+ $S:	$(OBJS)
  	$(CC) -o $@ $(EXPORT) $(OBJS) $(LIBS)
  
++glue.exe: glue.o
++	$(CC) -o $@ glue.o $(EXPORT) $(LIBS)
++
  clean:
 -	rm -f $(OBJS) $T $S core core.* a.out *.o glue
 +	rm -f $(OBJS) $T $S core core.* a.out *.o glue.exe
