@@ -13,7 +13,7 @@ jobs:
           luaVersion: "5.1"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
         with:
-          luaRocksVersion: "2.4"
+          luaRocksVersion: "2.4.4"
 
       - name: Checkout pilot-compiler
         uses: actions/checkout@v4
