@@ -6,12 +6,17 @@ jobs:
   build-exe:
     runs-on: windows-latest
     steps:
-      # Install system depedencies
+      # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: "5.1"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
+
+      - name: Checkout pilot-compiler
+        uses: actions/checkout@v4
+        with:
+          path: pilot-compiler
 
       - name: Checkout srlua
         uses: actions/checkout@v4
@@ -20,11 +25,6 @@ jobs:
           ref: dd0fc9461b4722d673631245d616e92c7c93c590
           path: srlua
 
-      - name: Checkout pilot-compiler
-        uses: actions/checkout@v4
-        with:
-          path: pilot-compiler
-
       - name: Build srlua
         run: |
           git apply ../pilot-compiler/srlua.patch
@@ -32,10 +32,15 @@ jobs:
           make glue.exe
         working-directory: srlua
 
-      - run: luarocks make
-        working-directory: pilot-compiler
-      - run: ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
+      - name: Make pilot-compiler
+        run: luarocks make
         working-directory: pilot-compiler
 
-      - run: ../pilot-compiler.exe main.lua
+      - name: Bundle pilot-compiler
+        run: ../srlua/glue.exe
+        # run: ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
+        working-directory: pilot-compiler
+
+      - name: test pilot-compiler
+        run: ../pilot-compiler.exe main.lua
         working-directory: pilot-compiler/example
