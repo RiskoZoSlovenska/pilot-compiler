@@ -13,30 +13,33 @@ jobs:
           luaVersion: "5.1"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
 
+      - name: Checkout custom luapak branch
+        uses: actions/checkout@v4
+        with:
+          repository: RiskoZoSlovenska/luapak
+          ref: luarocks-3
+          path: luapak
+
+      - name: Install custom luapak
+        run: luarocks make
+        working-directory: luapak
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           path: pilot-compiler
 
-      - name: Build
-        run: luarocks make
-        working-directory: pilot-compiler
-
-      - run: tree
-
       - name: Bundle
         run: |
-          curl -OL https://github.com/samyeyo/rtc/releases/download/v1.6.0/rtc-1.6.0-x64.zip
-          unzip -n rtc-1.6.0-x64.zip
-          sed -i 's/#!/--/' pilot-compiler.lua  # rtc doesn't like the shebang, so comment it out
-          ./rtc -s pilot-compiler.lua -o pilot-compiler.exe $env:APPDATA"/luarocks/share/lua/5.1/dkjson.lua" $env:APPDATA"/luarocks/share/lua/5.1/pl/lexer.lua"
-          dir
+          luapak --verbose --no-compress --no-minify make
+          tree
+          dir dist
         working-directory: pilot-compiler
 
       - name: Test
-        run: ../pilot-compiler.exe main.lua
+        run: ../dist/pilot-compiler.exe main.lua
         working-directory: pilot-compiler/example
 
       - uses: actions/upload-artifact@v4
         with:
-          path: pilot-compiler/pilot-compiler.exe
+          path: pilot-compiler/dist/pilot-compiler.exe
