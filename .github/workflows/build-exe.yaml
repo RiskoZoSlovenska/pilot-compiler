@@ -32,12 +32,10 @@ jobs:
           make glue.exe
         working-directory: srlua
 
-      - run: |
-          luarocks install penlight
-          luarocks install dkjson
-          ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
+      - run: luarocks make
+        working-directory: pilot-compiler
+      - run: ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
         working-directory: pilot-compiler
 
-      - run: |
-          ../pilot-compiler.exe main.lua
+      - run: ../pilot-compiler.exe main.lua
         working-directory: pilot-compiler/example
