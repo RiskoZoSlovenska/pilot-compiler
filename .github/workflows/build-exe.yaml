@@ -27,7 +27,7 @@ jobs:
           curl -OL https://github.com/samyeyo/rtc/releases/download/v1.6.0/rtc-1.6.0-x64.zip
           unzip -n rtc-1.6.0-x64.zip
           sed -i 's/#!/--/' pilot-compiler.lua  # rtc doesn't like the shebang, so comment it out
-          ./rtc -s pilot-compiler.lua
+          ./rtc -s ${{ github.workspace }}/.luarocks pilot-compiler.lua
           dir
         working-directory: pilot-compiler
 
