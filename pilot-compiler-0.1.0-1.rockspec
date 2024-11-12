@@ -12,6 +12,7 @@ dependencies = {
 	"lua >= 5.1, <= 5.4",
 	"penlight",
 	"dkjson",
+	"lfs",
 }
 build = {
 	type = "builtin",

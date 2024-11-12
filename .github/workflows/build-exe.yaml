@@ -29,6 +29,12 @@ jobs:
         with:
           path: pilot-compiler
 
+      - name: Test LFS
+        run: |
+          luarocks make
+          lua pilot-compiler.lua
+        working-directory: pilot-compiler
+
       - name: Bundle
         run: |
           luapak make --verbose

@@ -11,6 +11,8 @@ local SUFFIXES = {
 	"/init.luau",
 }
 
+print(require("lfs"))
+
 local lexer = require("pl.lexer")
 local json = require("dkjson")
 local find = require("pl.tablex").find
