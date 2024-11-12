@@ -6,7 +6,7 @@ jobs:
   build-exe:
     runs-on: windows-latest
     steps:
-      - run: echo $env:APPDATA
+      - run: echo $env:APPDATA"/hello"
 
       # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
