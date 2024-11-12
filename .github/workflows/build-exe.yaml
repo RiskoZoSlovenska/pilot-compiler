@@ -24,8 +24,8 @@ jobs:
           cd build
           cmake .. 
           cmake --build . --config Release
-          dir "${{ github.workspace }}\dlfcn-win32\build\lib"
-          dir "${{ github.workspace }}\dlfcn-win32\build\lib\Release"
+          dir "${{ github.workspace }}\dlfcn-win32\build\bin"
+          dir "${{ github.workspace }}\dlfcn-win32\build\bin\Release"
           $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\lib\Release"
           $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\bin\Release"
         working-directory: dlfcn-win32
@@ -45,6 +45,8 @@ jobs:
       - name: Build srlua
         run: |
           git apply ../pilot-compiler/srlua.patch
+          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\lib\Release"
+          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\bin\Release"
           echo $env:PATH
           make srlua.exe
         working-directory: srlua
