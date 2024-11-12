@@ -15,18 +15,6 @@ jobs:
         with:
           luaRocksVersion: "3.11.1"
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          path: pilot-compiler
-
-      - name: Test LFS
-        run: |
-          luarocks make
-          tree $env:APPDATA"/luarocks" /f /a
-          lua pilot-compiler.lua
-        working-directory: pilot-compiler
-
       - name: Checkout custom luapak branch
         uses: actions/checkout@v4
         with:
@@ -38,10 +26,15 @@ jobs:
         run: luarocks make
         working-directory: luapak
 
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: pilot-compiler
+
       - name: Bundle
         run: |
           luapak make --verbose
-          tree
+          tree /f /a
           dir dist
         working-directory: pilot-compiler
 
