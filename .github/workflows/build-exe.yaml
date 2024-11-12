@@ -20,8 +20,12 @@ jobs:
 
       - name: Checkout pilot-compiler
         uses: actions/checkout@v4
-        with:
-          path: pilot-compiler
+        # with:
+        #   path: pilot-compiler
+
+      - run: |
+          echo %cd%
+          tree
 
       - name: Build srlua
         run: |
