@@ -6,15 +6,12 @@ jobs:
   build-exe:
     runs-on: windows-latest
     steps:
-      - run: echo $env:APPDATA"/hello"
-
       # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: "5.1"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
-
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +29,7 @@ jobs:
           curl -OL https://github.com/samyeyo/rtc/releases/download/v1.6.0/rtc-1.6.0-x64.zip
           unzip -n rtc-1.6.0-x64.zip
           sed -i 's/#!/--/' pilot-compiler.lua  # rtc doesn't like the shebang, so comment it out
-          ./rtc -s pilot-compiler.lua $env:APPDATA + "/share/lua/5.1/dkjson.lua" $env:APPDATA + "/share/lua/5.1/pl/lexer.lua"
+          ./rtc -s $env:APPDATA"\luarocks" pilot-compiler.lua
           dir
         working-directory: pilot-compiler
 
