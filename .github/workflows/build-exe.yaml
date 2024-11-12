@@ -13,23 +13,6 @@ jobs:
           luaVersion: "5.4"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
 
-      - uses: actions/checkout@v4
-        with:
-          repository: dlfcn-win32/dlfcn-win32
-          path: dlfcn-win32
-
-      - name: Build dlfcn
-        run: |
-          mkdir build
-          cd build
-          cmake .. 
-          cmake --build . --config Release
-          dir "${{ github.workspace }}\dlfcn-win32\build\bin"
-          dir "${{ github.workspace }}\dlfcn-win32\build\bin\Release"
-          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\lib\Release"
-          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\bin\Release"
-        working-directory: dlfcn-win32
-
       - name: Checkout srlua
         uses: actions/checkout@v4
         with:
@@ -45,15 +28,13 @@ jobs:
       - name: Build srlua
         run: |
           git apply ../pilot-compiler/srlua.patch
-          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\lib\Release"
-          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\bin\Release"
-          echo $env:PATH
           make srlua.exe
+          make glue.exe
         working-directory: srlua
 
       - run: |
           luarocks make
-          ../srlua/glue ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
+          ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
         working-directory: pilot-compiler
 
       - run: |
