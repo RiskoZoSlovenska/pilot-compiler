@@ -16,7 +16,7 @@ jobs:
           luaRocksVersion: "3.11.1"
 
       - run: tree ".lua" /f /a
-      - run: type $env:APPDATA"/luarocks/config-1.5.lua"
+      - run: type $env:APPDATA"/luarocks/config-5.1.lua"
 
       - name: Checkout custom luapak
         uses: actions/checkout@v4
