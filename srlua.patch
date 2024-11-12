@@ -56,3 +56,15 @@ index 4692cd5..15bb353 100644
 +	rm -f $(OBJS) $T $S core core.* a.out *.o glue.exe
  
  # eof
+diff --git a/glue.c b/glue.c
+index d7c81c0..7b833e1 100644
+--- a/glue.c
++++ b/glue.c
+@@ -14,6 +14,7 @@
+ 
+ static void cannot(const char* what, const char* name)
+ {
++ printf("oh no!\n");
+  fprintf(stderr,"cannot %s %s: %s\n",what,name,strerror(errno));
+  exit(EXIT_FAILURE);
+ }
