@@ -20,19 +20,16 @@ jobs:
 
       - name: Checkout pilot-compiler
         uses: actions/checkout@v4
-        with:
-          path: pilot-compiler
 
       - name: Build srlua
         run: |
           git apply ../srlua.patch
           make srlua.exe
-        working-directory: srlua
+        working-directory: ../srlua
 
       - run: |
           luarocks make
           srlua/glue srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
-        working-directory: pilot-compiler
 
       - run: |
           ../pilot-compiler.exe main.lua
