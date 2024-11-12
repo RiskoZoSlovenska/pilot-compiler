@@ -12,39 +12,18 @@ jobs:
         with:
           luaVersion: "5.1"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
+        with:
+          luaRocksVersion: "2.4"
 
       - name: Checkout pilot-compiler
         uses: actions/checkout@v4
-        with:
-          path: pilot-compiler
 
-      - name: Checkout srlua
-        uses: actions/checkout@v4
-        with:
-          repository: LuaDist/srlua
-          ref: dd0fc9461b4722d673631245d616e92c7c93c590
-          path: srlua
-
-      - name: Build srlua
+      - name: Bundle
         run: |
-          git apply ../pilot-compiler/srlua.patch
-          make srlua.exe
-          make glue.exe
-          echo "Built ok"
+          luarocks install luapak
+          luapak make
           dir
-          ./glue.exe srlua.exe test.lua test.exe
-          echo "Bundled ok"
-          ./test.exe 123 "hello"
-        working-directory: srlua
-
-      - name: Make pilot-compiler
-        run: luarocks make
-        working-directory: pilot-compiler
-
-      - name: Bundle pilot-compiler
-        run: ../srlua/glue.exe ../srlua/srlua.exe pilot-compiler.lua pilot-compiler.exe
-        working-directory: pilot-compiler
 
       - name: Test pilot-compiler
         run: ../pilot-compiler.exe main.lua
-        working-directory: pilot-compiler/example
+        working-directory: example
