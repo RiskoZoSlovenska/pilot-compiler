@@ -1,0 +1,28 @@
+diff --git a/Makefile b/Makefile
+index 4692cd5..3b64296 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,10 +1,10 @@
+ # makefile for srlua
+ 
+ # change these to reflect your Lua installation
+-LUA= /tmp/lhf/lua-5.2.0
+-LUAINC= $(LUA)/src
+-LUALIB= $(LUA)/src
+-LUABIN= $(LUA)/src
++LUA= .lua
++LUAINC= $(LUA)/include
++LUALIB= $(LUA)/lib
++LUABIN= $(LUA)/bin
+ 
+ # these will probably work if Lua has been installed globally
+ #LUA= /usr/local
+@@ -22,7 +22,7 @@ EXPORT= -Wl,-E
+ # for Mac OS X comment the previous line above or do 'make EXPORT='
+ 
+ T= a.out
+-S= srlua
++S= srlua.exe
+ OBJS= srlua.o
+ TEST= test.lua
+ 
