@@ -12,7 +12,18 @@ jobs:
         with:
           luaVersion: "5.4"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
-      - run: pacman -S mingw-w64-x86_64-dlfcn  # https://stackoverflow.com/a/77671742
+
+      - uses: actions/checkout@v4
+        with:
+          repository: dlfcn-win32/dlfcn-win32
+          path: dlfcn-win32
+
+      - name: Build dlfcn
+        run: |
+          ./configure
+          make
+          make install
+        working-directory: dlfcn-win32
 
       - name: Checkout srlua
         uses: actions/checkout@v4
