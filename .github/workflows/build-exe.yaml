@@ -20,8 +20,10 @@ jobs:
 
       - name: Build dlfcn
         run: |
-          ./configure
-          make
+          mkdir build &&
+          cd build &&
+          cmake .. &&
+          make &&
           make install
         working-directory: dlfcn-win32
 
