@@ -8,7 +8,7 @@ jobs:
     steps:
       # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
-      - uses: leso-kn/gh-actions-lua@vfeature/fix-c-module-loading-windows
+      - uses: leso-kn/gh-actions-lua@feature/fix-c-module-loading-windows
         with:
           luaVersion: "5.1"
       - uses: luarocks/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
