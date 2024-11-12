@@ -12,8 +12,7 @@ jobs:
         with:
           luaVersion: "5.1"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
-    
-      - run: tree
+
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,6 +22,8 @@ jobs:
       - name: Build
         run: luarocks make
         working-directory: pilot-compiler
+
+      - run: tree
 
       - name: Bundle
         run: |
