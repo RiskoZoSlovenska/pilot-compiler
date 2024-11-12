@@ -15,7 +15,7 @@ jobs:
         with:
           luaRocksVersion: "3.11.1"
 
-      - run: tree .lua \f \a
+      - run: tree ".lua" \f \a
 
       - name: Checkout custom luapak
         uses: actions/checkout@v4
