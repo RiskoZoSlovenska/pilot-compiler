@@ -24,7 +24,8 @@ jobs:
           cd build
           cmake .. 
           cmake --build . --config Release
-          cmake --install .
+          dir
+          set PATH=${{ github.workspace }}\dlfcn-win32\build;%PATH%
         working-directory: dlfcn-win32
 
       - name: Checkout srlua
