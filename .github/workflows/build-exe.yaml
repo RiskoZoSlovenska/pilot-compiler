@@ -8,7 +8,7 @@ jobs:
     steps:
       # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
-      - uses: luarocks/gh-actions-lua@master
+      - uses: luarocks/gh-actions-lua@master  # See https://github.com/lunarmodules/luasystem/pull/17#issuecomment-1986387525
         with:
           luaVersion: "5.1"
       - uses: luarocks/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
@@ -16,6 +16,7 @@ jobs:
           luaRocksVersion: "3.11.1"
 
       - run: tree ".lua" /f /a
+      - run: type $env:APPDATA"/luarocks/config-1.5.lua"
 
       - name: Checkout custom luapak
         uses: actions/checkout@v4
@@ -37,7 +38,6 @@ jobs:
         run: |
           luapak make -o pilot-compiler.exe --verbose --lua-incdir="${{ github.workspace }}/.lua/include" --lua-lib="${{ github.workspace }}/.lua/lib/lua51.dll"
           tree /f /a
-          move dist/pilot-compiler pilot-compiler.exe
         working-directory: pilot-compiler
 
       - name: Test
