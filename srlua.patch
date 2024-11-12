@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 4692cd5..db74c38 100644
+index 4692cd5..193780b 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,28 +1,22 @@
@@ -27,8 +27,9 @@ index 4692cd5..db74c38 100644
  WARN= -ansi -pedantic -Wall -Wextra
  INCS= -I$(LUAINC)
 -LIBS= -L$(LUALIB) -llua -lm -ldl
+-EXPORT= -Wl,-E
 +LIBS= -L$(LUALIB) -llua51 -lm
- EXPORT= -Wl,-E
++EXPORT= -Wl, --export-all-symbols
  # for Mac OS X comment the previous line above or do 'make EXPORT='
  
  T= a.out
