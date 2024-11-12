@@ -29,7 +29,7 @@ index 4692cd5..193780b 100644
 -LIBS= -L$(LUALIB) -llua -lm -ldl
 -EXPORT= -Wl,-E
 +LIBS= -L$(LUALIB) -llua51 -lm
-+EXPORT= -Wl, --export-all-symbols
++EXPORT= -Wl
  # for Mac OS X comment the previous line above or do 'make EXPORT='
  
  T= a.out
