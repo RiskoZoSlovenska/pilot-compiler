@@ -26,8 +26,8 @@ jobs:
           cmake --build . --config Release
           dir
           tree
-          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\lib"
-          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\bin"
+          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\lib\Release"
+          $env:PATH += ";${{ github.workspace }}\dlfcn-win32\build\bin\Release"
         working-directory: dlfcn-win32
 
       - name: Checkout srlua
