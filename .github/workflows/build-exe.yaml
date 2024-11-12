@@ -25,7 +25,7 @@ jobs:
         run: |
           git apply ../srlua.patch
           make srlua.exe
-        working-directory: ../srlua
+        working-directory: ${{ github.workspace }}/srlua
 
       - run: |
           luarocks make
