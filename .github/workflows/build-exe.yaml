@@ -31,6 +31,7 @@ jobs:
           make srlua.exe
           make glue.exe
           echo "Built ok"
+          dir
           glue.exe srlua.exe test.lua test.exe
           echo "Bundled ok"
           test.exe 123 "hello"
