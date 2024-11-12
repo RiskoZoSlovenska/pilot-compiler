@@ -20,11 +20,10 @@ jobs:
 
       - name: Build dlfcn
         run: |
-          mkdir build &&
-          cd build &&
-          cmake .. &&
-          make &&
-          make install
+          mkdir build
+          cmake -S . -B build
+          cmake --build build
+          cmake --install build
         working-directory: dlfcn-win32
 
       - name: Checkout srlua
