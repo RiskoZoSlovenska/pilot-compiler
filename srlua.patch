@@ -1,8 +1,8 @@
 diff --git a/Makefile b/Makefile
-index 4692cd5..037d738 100644
+index 4692cd5..5e00a4d 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,10 +1,10 @@
+@@ -1,16 +1,10 @@
  # makefile for srlua
  
  # change these to reflect your Lua installation
@@ -10,25 +10,34 @@ index 4692cd5..037d738 100644
 -LUAINC= $(LUA)/src
 -LUALIB= $(LUA)/src
 -LUABIN= $(LUA)/src
-+LUA= ../.lua
+-
+-# these will probably work if Lua has been installed globally
+-#LUA= /usr/local
+-#LUAINC= $(LUA)/include
+-#LUALIB= $(LUA)/lib
+-#LUABIN= $(LUA)/bin
++LUA= $(GITHUB_WORKSPACE)/.lua
 +LUAINC= $(LUA)/include
 +LUALIB= $(LUA)/lib
 +LUABIN= $(LUA)/bin
  
- # these will probably work if Lua has been installed globally
- #LUA= /usr/local
-@@ -17,12 +17,12 @@ CC= gcc
- CFLAGS= $(INCS) $(WARN) -O2 $G
- WARN= -ansi -pedantic -Wall -Wextra
- INCS= -I$(LUAINC)
--LIBS= -L$(LUALIB) -llua -lm -ldl
-+LIBS= -L$(LUALIB) -llua54 -lm
- EXPORT= -Wl,-E
- # for Mac OS X comment the previous line above or do 'make EXPORT='
+ # probably no need to change anything below here
+ CC= gcc
+@@ -31,14 +25,13 @@ all:	test
+ test:	$T
+ 	./$T *
  
- T= a.out
--S= srlua
-+S= srlua.exe
- OBJS= srlua.o
- TEST= test.lua
+-$T:	$S $(TEST) glue
+-	./glue $S $(TEST) $T
+-	chmod +x $T
++$T:	$S $(TEST) glue.exe
++	./glue.exe $S $(TEST) $T
  
+ $S:	$(OBJS)
+ 	$(CC) -o $@ $(EXPORT) $(OBJS) $(LIBS)
+ 
+ clean:
+-	rm -f $(OBJS) $T $S core core.* a.out *.o glue
++	rm -f $(OBJS) $T $S core core.* a.out *.o glue.exe
+ 
+ # eof
