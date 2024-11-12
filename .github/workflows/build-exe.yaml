@@ -45,6 +45,7 @@ jobs:
       - name: Build srlua
         run: |
           git apply ../pilot-compiler/srlua.patch
+          echo %PATH%
           make srlua.exe
         working-directory: srlua
 
