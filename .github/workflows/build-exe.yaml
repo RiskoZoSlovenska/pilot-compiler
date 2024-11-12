@@ -8,10 +8,12 @@ jobs:
     steps:
       # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
-      - uses: leafo/gh-actions-lua@v10
+      - uses: leso-kn/gh-actions-lua@vfeature/fix-c-module-loading-windows
         with:
           luaVersion: "5.1"
-      - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
+      - uses: luarocks/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
+        with:
+          luaRocksVersion: "3.11.1"
 
       - name: Checkout
         uses: actions/checkout@v4
