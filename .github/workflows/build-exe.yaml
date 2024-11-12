@@ -9,7 +9,10 @@ jobs:
       # Install system depedencies
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.4"
       - uses: hishamhm/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
+      - run: pacman -S mingw-w64-x86_64-dlfcn  # https://stackoverflow.com/a/77671742
 
       - name: Checkout srlua
         uses: actions/checkout@v4
