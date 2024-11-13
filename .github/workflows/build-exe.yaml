@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: RiskoZoSlovenska/luapak
-          ref: luarocks-3
+          ref: windows
           path: luapak
 
       - name: Install custom luapak
