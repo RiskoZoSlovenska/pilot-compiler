@@ -36,7 +36,7 @@ jobs:
 
       - name: Bundle
         run: |
-          luapak make -o pilot-compiler.exe --verbose `
+          luapak make --verbose `
             --lua="${{ github.workspace }}/.lua/bin/lua.exe" `
             --lua-incdir="${{ github.workspace }}/.lua/include" `
             --lua-lib="${{ github.workspace }}/.lua/lib/lua51.lib"
@@ -44,9 +44,9 @@ jobs:
         working-directory: pilot-compiler
 
       - name: Test
-        run: ../pilot-compiler.exe main.lua
+        run: ../dist/pilot-compiler.exe main.lua
         working-directory: pilot-compiler/example
 
       - uses: actions/upload-artifact@v4
         with:
-          path: pilot-compiler/pilot-compiler.exe
+          path: pilot-compiler/dist/pilot-compiler.exe
