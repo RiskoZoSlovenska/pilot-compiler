@@ -43,10 +43,10 @@ jobs:
           tree /f /a
         working-directory: pilot-compiler
 
-      - name: Test
-        run: ../dist/pilot-compiler.exe main.lua
-        working-directory: pilot-compiler/example
-
       - uses: actions/upload-artifact@v4
         with:
           path: pilot-compiler/dist/pilot-compiler.exe
+
+      - name: Test
+        run: ../dist/pilot-compiler.exe main.lua
+        working-directory: pilot-compiler/example
