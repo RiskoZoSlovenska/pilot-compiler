@@ -39,7 +39,7 @@ jobs:
           luapak make -o pilot-compiler.exe --verbose `
             --lua="${{ github.workspace }}/.lua/bin/lua.exe" `
             --lua-incdir="${{ github.workspace }}/.lua/include" `
-            --lua-lib="${{ github.workspace }}/.lua/lib/lua51.dll"
+            --lua-lib="${{ github.workspace }}/.lua/lib/lua51.lib"
           tree /f /a
         working-directory: pilot-compiler
 
