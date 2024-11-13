@@ -40,7 +40,9 @@ jobs:
             --lua="${{ github.workspace }}/.lua/bin/lua.exe" `
             --lua-incdir="${{ github.workspace }}/.lua/include" `
             --lua-lib="${{ github.workspace }}/.lua/lib/lua51.lib"
-          tree /f /a
+        working-directory: pilot-compiler
+
+      - run: tree /f /a
         working-directory: pilot-compiler
 
       - uses: actions/upload-artifact@v4
