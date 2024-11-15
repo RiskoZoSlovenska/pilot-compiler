@@ -18,6 +18,17 @@ jobs:
       - run: tree ".lua" /f /a
       - run: type $env:APPDATA"/luarocks/config-5.1.lua"
 
+      - name: Checkout Busted
+        uses: actions/checkout@v4
+        with:
+          repository: lunarmodules/busted
+          ref: v2.2.0
+          path: busted
+
+      - name: Test Busted
+        run: luarocks make && luarocks test
+        working-directory: busted
+
       - name: Checkout custom luapak
         uses: actions/checkout@v4
         with:
