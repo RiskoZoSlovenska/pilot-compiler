@@ -105,6 +105,8 @@ local function preprocessFile(contents)
 	local buf = {}
 	local requires = {}
 
+	table.insert(buf, "_=_\n") -- Workaround for https://github.com/Eggs-D-Studios/wos-issues/issues/547
+
 	local iter = lexer.lua(contents, {}, {})
 
 	local function consumeInsignificant(minibuf)
@@ -172,7 +174,7 @@ local function getComponents(fileName, requiring, required)
 
 	local rawContent = assert(readFile(fileName), "no such module: " .. fileName)
 	local newContent, deps = preprocessFile(rawContent)
-	local expression = getFileContentsAsExpression(newContent, fileName, deps)
+	local expression = getFileContentsAsExpression(newContent, fileName)
 
 	local buf = {}
 	for _, dep in ipairs(deps) do
