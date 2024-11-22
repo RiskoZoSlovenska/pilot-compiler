@@ -105,8 +105,6 @@ local function preprocessFile(contents)
 	local buf = {}
 	local requires = {}
 
-	table.insert(buf, "_=_\n") -- Workaround for https://github.com/Eggs-D-Studios/wos-issues/issues/547
-
 	local iter = lexer.lua(contents, {}, {})
 
 	local function consumeInsignificant(minibuf)
@@ -151,6 +149,8 @@ local function preprocessFile(contents)
 
 		if typ == "iden" and token == "require" then
 			join(buf, parseRequire({token}))
+		elseif typ == "comment" then
+			table.insert(buf, token:match("\n$")) -- May be nil, and that's ok
 		else
 			table.insert(buf, token)
 		end
