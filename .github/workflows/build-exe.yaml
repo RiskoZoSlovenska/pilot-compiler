@@ -16,7 +16,6 @@ jobs:
           luaRocksVersion: "3.11.1"
 
       - run: tree ".lua" /f /a
-      - run: type $env:APPDATA"/luarocks/config-5.1.lua"
 
       - name: Install luastatic
         run: luarocks install luastatic
@@ -34,7 +33,7 @@ jobs:
         run: |
           luastatic pilot-compiler.lua `
             $(lua find-files.lua pilot-compiler --lua) `
-            "${{ github.workspace }}/.lua/lib/lua51.lib" `
+            "${{ github.workspace }}/.lua/lib/lua52.lib" `
             $(lua find-files.lua pilot-compiler --bin) `
             -I"${{ github.workspace }}/.lua/include"
         working-directory: pilot-compiler
