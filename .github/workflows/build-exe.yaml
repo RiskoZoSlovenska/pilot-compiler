@@ -33,9 +33,9 @@ jobs:
       - name: Bundle
         run: |
           luastatic pilot-compiler.lua `
-            "$(lua find-files.lua pilot-compiler --lua)" `
+            $(lua find-files.lua pilot-compiler --lua) `
             "${{ github.workspace }}/.lua/lib/lua51.lib" `
-            "$(lua find-files.lua pilot-compiler --bin)" `
+            $(lua find-files.lua pilot-compiler --bin) `
             -I"${{ github.workspace }}/.lua/include"
         working-directory: pilot-compiler
 
