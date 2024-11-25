@@ -19,7 +19,7 @@ jobs:
       - run: type $env:APPDATA"/luarocks/config-5.1.lua"
 
       - name: Install luastatic
-        run: luarocks instal luastatic
+        run: luarocks install luastatic
 
       - name: Checkout
         uses: actions/checkout@v4
