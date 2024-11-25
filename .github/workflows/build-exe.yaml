@@ -42,7 +42,7 @@ jobs:
 
       - name: Bundle
         run: |
-          amalg.lua -x -s pilot-compiler.lua dkjson pl.path lfs -o out.lua
+          amalg.lua -x -o out.lua -s pilot-compiler.lua -- dkjson pl.path
           luastatic out.lua `
             "${{ github.workspace }}/.lua/lib/lua52.lib" `
             -I"${{ github.workspace }}/.lua/include"
