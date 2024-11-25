@@ -10,7 +10,7 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: RiskoZoSlovenska/gh-actions-lua-static@static  # See https://github.com/lunarmodules/luasystem/pull/17#issuecomment-1986387525
         with:
-          luaVersion: "5.1"
+          luaVersion: "5.2"
       - uses: luarocks/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
         with:
           luaRocksVersion: "3.11.1"
