@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Luastatic
         uses: actions/checkout@v4
         with:
-          repo: lua-batteries/luastatic
+          repository: lua-batteries/luastatic
           ref: f5da1fbbe5e1771ae6d6771e6258601cdfce75d8
           path: luastatic
 
