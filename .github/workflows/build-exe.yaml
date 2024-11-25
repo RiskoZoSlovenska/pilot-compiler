@@ -17,6 +17,9 @@ jobs:
 
       - run: tree ".lua" /f /a
 
+      - name: Install amalg
+        run: luarocks install amalg
+
       - name: Checkout Luastatic
         uses: actions/checkout@v4
         with:
@@ -39,11 +42,11 @@ jobs:
 
       - name: Bundle
         run: |
-          luastatic pilot-compiler.lua `
-            $(lua find-files.lua pilot-compiler --lua).Split(" ") `
+          amalg.lua -x -s pilot-compiler.lua dkjson pl.path lfs -o out.lua
+          luastatic out.lua `
             "${{ github.workspace }}/.lua/lib/lua52.lib" `
-            $(lua find-files.lua pilot-compiler --bin).Split(" ") `
             -I"${{ github.workspace }}/.lua/include"
+          move out.exe pilot-compiler.exe
         working-directory: pilot-compiler
 
       - run: tree /f /a
