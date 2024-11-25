@@ -18,39 +18,25 @@ jobs:
       - run: tree ".lua" /f /a
       - run: type $env:APPDATA"/luarocks/config-5.1.lua"
 
-      - name: Checkout Busted
-        uses: actions/checkout@v4
-        with:
-          repository: lunarmodules/busted
-          ref: v2.2.0
-          path: busted
-
-      - name: Test Busted
-        run: luarocks make && luarocks test
-        working-directory: busted
-
-      - name: Checkout custom luapak
-        uses: actions/checkout@v4
-        with:
-          repository: RiskoZoSlovenska/luapak
-          ref: windows
-          path: luapak
-
-      - name: Install custom luapak
-        run: luarocks make
-        working-directory: luapak
+      - name: Install luastatic
+        run: luarocks instal luastatic
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
           path: pilot-compiler
 
+      - name: Make
+        run: luarocks make
+        working-directory: pilot-compiler
+
       - name: Bundle
         run: |
-          luapak make --verbose `
-            --lua="${{ github.workspace }}/.lua/bin/lua.exe" `
-            --lua-incdir="${{ github.workspace }}/.lua/include" `
-            --lua-lib="${{ github.workspace }}/.lua/lib/lua51.lib"
+          luastatic pilot-compiler.lua `
+            "$(lua find-files.lua pilot-compiler --lua)" `
+            "${{ github.workspace }}/.lua/lib/lua51.lib" `
+            "$(lua find-files.lua pilot-compiler --bin)" `
+            -I"${{ github.workspace }}/.lua/include"
         working-directory: pilot-compiler
 
       - run: tree /f /a
