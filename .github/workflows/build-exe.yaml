@@ -17,8 +17,16 @@ jobs:
 
       - run: tree ".lua" /f /a
 
-      - name: Install luastatic
-        run: luarocks install luastatic
+      - name: Checkout Luastatic
+        uses: actions/checkout@v4
+        with:
+          repo: lua-batteries/luastatic
+          ref: f5da1fbbe5e1771ae6d6771e6258601cdfce75d8
+          path: luastatic
+
+      - name: Make luastatic
+        run: luarocks make
+        working-directory: luastatic
 
       - name: Checkout
         uses: actions/checkout@v4
