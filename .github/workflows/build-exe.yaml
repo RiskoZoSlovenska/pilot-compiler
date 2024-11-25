@@ -8,7 +8,7 @@ jobs:
     steps:
       # System depedencies
       - uses: ilammy/msvc-dev-cmd@v1
-      - uses: RiskoZoSlovenska/gh-actions-lua-static@static  # See https://github.com/lunarmodules/luasystem/pull/17#issuecomment-1986387525
+      - uses: RiskoZoSlovenska/gh-actions-lua-static@master  # See https://github.com/lunarmodules/luasystem/pull/17#issuecomment-1986387525
         with:
           luaVersion: "5.2"
       - uses: luarocks/gh-actions-luarocks@master  # See https://github.com/leafo/gh-actions-luarocks/pull/14
@@ -42,7 +42,7 @@ jobs:
 
       - name: Bundle
         run: |
-          amalg.lua -x -o out.lua -s pilot-compiler.lua -- dkjson pl.path
+          amalg.lua -x -o out.lua -s pilot-compiler.lua -- dkjson pl.path lfs
           luastatic out.lua `
             "${{ github.workspace }}/.lua/lib/lua52.lib" `
             -I"${{ github.workspace }}/.lua/include"
