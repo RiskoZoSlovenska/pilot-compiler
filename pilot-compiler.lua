@@ -1,5 +1,9 @@
 #!/usr/bin/env lua
 
+local lexer = require("pl.lexer")
+local json = require("dkjson")
+local find = require("pl.tablex").find
+
 local MODULES_TBL_NAME = "__pcmodules__"
 local KEYWORDS = { "and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local",
 	"nil", "not", "or", "repeat", "return", "then", "true", "until", "while", "continue", "goto" }
@@ -10,10 +14,37 @@ local SUFFIXES = {
 	"/init.lua",
 	"/init.luau",
 }
+local EXTRAS = [[
+local rawget = rawget or function(tbl, key)
+	local meta = getmetatable(tbl)
+	if meta then
+		setmetatable(tbl, nil)
+	end
 
-local lexer = require("pl.lexer")
-local json = require("dkjson")
-local find = require("pl.tablex").find
+	local value = tbl[key]
+
+	if meta then
+		setmetatable(tbl, meta)
+	end
+
+	return value
+end
+
+local rawset = rawset or function(tbl, key, value)
+	local meta = getmetatable(tbl)
+	if meta then
+		setmetatable(tbl, nil)
+	end
+
+	tbl[key] = value
+
+	if meta then
+		setmetatable(tbl, meta)
+	end
+
+	return tbl
+end
+]]
 
 
 local function join(tbl1, tbl2)
@@ -198,6 +229,7 @@ end
 local function compile(filename)
 	local buf = getComponents(filename, {}, {})
 	table.insert(buf, 1, string.format("local %s = {}", MODULES_TBL_NAME))
+	table.insert(buf, 2, EXTRAS)
 	return table.concat(buf, "\n\n")
 end
 
